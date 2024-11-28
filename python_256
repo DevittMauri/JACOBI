@@ -1,0 +1,42 @@
+import numpy as np
+
+# Coeficientes del sistema de ecuaciones
+A = np.array([[52, 20, 25],
+              [30, 50, 20],
+              [18, 30, 55]], dtype=float)
+
+# Vector de términos independientes
+b = np.array([4800, 5810, 5690], dtype=float)
+
+# Condiciones iniciales y parámetros
+x = np.zeros(len(b))  # Valores iniciales
+max_iter = 1000  # Número máximo de iteraciones
+tol = 1e-8  # Tolerancia
+
+# Método de Jacobi
+def jacobi(A, b, x, max_iter, tol):
+    n = len(b)
+    x_new = np.zeros_like(x)
+    
+    for iter_num in range(max_iter):
+        for i in range(n):
+            s = sum(A[i][j] * x[j] for j in range(n) if j != i)
+            x_new[i] = (b[i] - s) / A[i][i]
+        
+        # Verificar si la solución cumple con la tolerancia
+        if np.linalg.norm(x_new - x, ord=np.inf) < tol:
+            return x_new, iter_num + 1  # Devuelve la solución y el número de iteraciones
+        
+        x = x_new.copy()
+    
+    return x, max_iter  # Si no converge, devuelve la última aproximación
+
+# Solución
+solution, iterations = jacobi(A, b, x, max_iter, tol)
+
+# Mostrar resultados
+print("Solución:")
+print(f"x = {solution[0]:.8f}")
+print(f"y = {solution[1]:.8f}")
+print(f"z = {solution[2]:.8f}")
+print(f"Iteraciones: {iterations}")
